@@ -1,0 +1,6 @@
+export default {
+  OK: 200,
+  CREATED: 201,
+  CONFLICT: 409,
+  UNPROCESSABLE_ENTITY: 422,
+};
