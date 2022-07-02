@@ -13,6 +13,8 @@ import AppName from './shared/AppName';
 import httpStatus from '../utils/httpStatus';
 
 function SignUpForm() {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -28,7 +30,7 @@ function SignUpForm() {
 
   function signUp() {
     axios
-      .post('http://127.0.0.1:5000/sign-up', form)
+      .post(`${API_URL}/sign-up`, form)
       .then(() => {
         navigate('/sign-in');
       })
