@@ -5,9 +5,14 @@ import UserContext from '../contexts/UserContext';
 
 import SignUp from './SignUp';
 import SignIn from './SignIn';
+import Home from './Home';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    token: '',
+  });
 
   return (
     <BrowserRouter>
@@ -15,6 +20,7 @@ function App() {
         <Routes>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/" element={<Home />} />
         </Routes>
       </UserContext.Provider>
     </BrowserRouter>
