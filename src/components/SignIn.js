@@ -28,7 +28,8 @@ function SignInForm() {
     axios
       .post(`${API_URL}/sign-in`, form)
       .then(({ data }) => {
-        setUser({ email: form.email, token: data.token });
+        const { name, email, token } = data;
+        setUser({ name, email, token });
         navigate('/');
       })
       .catch(({ response }) => {
