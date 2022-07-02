@@ -67,7 +67,7 @@ function Home() {
 
   const navigate = useNavigate();
 
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   const [wallet, setWallet] = useState({
     balance: 0,
@@ -95,12 +95,53 @@ function Home() {
       });
   }, []);
 
+  function signOut() {
+    const canSignOut = window.confirm('Deseja mesmo sair?');
+
+    if (canSignOut) {
+      axios
+        .post(
+          `${API_URL}/sign-out`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        )
+        .then(() => {
+          setUser({
+            name: '',
+            email: '',
+            token: '',
+          });
+
+          navigate('/sign-in');
+        })
+        .catch(({ response }) => {
+          const { status } = response;
+
+          if (
+            status === httpStatus.UNAUTHORIZED ||
+            status === httpStatus.NOT_FOUND
+          ) {
+            navigate('/');
+            return;
+          }
+
+          alert(
+            'Não foi possível realizar esta operação! Tente novamente mais tarde'
+          );
+        });
+    }
+  }
+
   return (
     <Container>
       <Main>
         <Top>
           Olá, {user.name}
-          <ion-icon name="exit-outline" />
+          <ion-icon onClick={signOut} name="exit-outline" />
         </Top>
         <CashRecords balance={wallet.balance} cashFlow={wallet.cashFlow} />
         <NewRecordButtons>
