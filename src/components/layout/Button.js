@@ -8,6 +8,12 @@ const Button = styled.button`
   border-radius: 5px;
   font-size: 20px;
   color: #ffffff;
+  font-weight: 700;
+  line-height: 20px;
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 export default Button;
