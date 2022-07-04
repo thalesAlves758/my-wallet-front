@@ -9,13 +9,16 @@ import Home from './Home';
 import NewInput from './NewInput';
 import NewOutput from './NewOutput';
 import EditRecord from './EditRecord';
+import userLocalStorage from '../utils/userLocalStorage';
 
 function App() {
-  const [user, setUser] = useState({
+  const initialUser = userLocalStorage.get('user') || {
     name: '',
     email: '',
     token: '',
-  });
+  };
+
+  const [user, setUser] = useState(initialUser);
 
   return (
     <BrowserRouter>
