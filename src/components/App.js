@@ -8,6 +8,7 @@ import SignIn from './SignIn';
 import Home from './Home';
 import NewInput from './NewInput';
 import NewOutput from './NewOutput';
+import EditRecord from './EditRecord';
 
 function App() {
   const [user, setUser] = useState({
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/new-input" element={<NewInput />} />
           <Route path="/new-output" element={<NewOutput />} />
+          <Route path="/update-record" element={<EditRecord />} />
         </Routes>
       </UserContext.Provider>
     </BrowserRouter>
