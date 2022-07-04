@@ -6,6 +6,7 @@ import UserContext from '../contexts/UserContext';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import Home from './Home';
+import NewInput from './NewInput';
 
 function App() {
   const [user, setUser] = useState({
@@ -21,6 +22,7 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/" element={<Home />} />
+          <Route path="/new-input" element={<NewInput />} />
         </Routes>
       </UserContext.Provider>
     </BrowserRouter>
