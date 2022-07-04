@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
@@ -68,7 +68,11 @@ function Record({ id, type, description, value, date, wallet, setWallet }) {
     <RecordListItem>
       <div>
         <RecordDate>{dayjs(date).format('DD/MM')}</RecordDate>
-        <RecordDescription>{description}</RecordDescription>
+        <RecordDescription>
+          <Link to="update-record" state={{ id, value, description }}>
+            {description}
+          </Link>
+        </RecordDescription>
       </div>
 
       <div>
@@ -298,9 +302,13 @@ const RecordDate = styled.span`
 `;
 
 const RecordDescription = styled.span`
-  color: #000000;
   margin-left: 10px;
   word-break: break-word;
+
+  a {
+    color: #000000;
+    text-decoration: none;
+  }
 `;
 
 const RecordValue = styled.span`
