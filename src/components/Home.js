@@ -16,7 +16,54 @@ import toBrl from '../utils/toBrl';
 
 const ZERO = 0;
 
-function Record({ type, description, value, date }) {
+function toNegative(value) {
+  const MINUS_ONE = -1;
+
+  return MINUS_ONE * Math.abs(value);
+}
+
+function Record({ id, type, description, value, date, wallet, setWallet }) {
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  const { user } = useContext(UserContext);
+
+  function removeRecordFromCashFlowById(recordId) {
+    return wallet.cashFlow.filter((record) => record._id !== recordId);
+  }
+
+  function deleteRecord() {
+    const canDelete = window.confirm('Deseja mesmo excluir este registro?');
+
+    if (!canDelete) {
+      return;
+    }
+
+    const newBalance =
+      wallet.balance + (type === 'input' ? toNegative(value) : value);
+
+    axios
+      .delete(`${API_URL}/records/${id}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      })
+      .then(() => {
+        setWallet({
+          balance: newBalance,
+          cashFlow: removeRecordFromCashFlowById(id),
+        });
+      })
+      .catch(({ response }) => {
+        const { status } = response;
+
+        if (status === httpStatus.INTERNAL_SERVER_ERROR) {
+          alert(
+            'Não foi possível realizar esta operação. Tente novamente mais tarde!'
+          );
+        }
+      });
+  }
+
   return (
     <RecordListItem>
       <div>
@@ -26,20 +73,26 @@ function Record({ type, description, value, date }) {
 
       <div>
         <RecordValue type={type}>{toBrl(value)}</RecordValue>
+        <ion-icon onClick={deleteRecord} name="close-outline" />
       </div>
     </RecordListItem>
   );
 }
 
-function CashRecords({ balance, cashFlow = [] }) {
+function CashRecords({ wallet, setWallet }) {
+  const { balance, cashFlow } = wallet;
+
   function renderRecords(records) {
     return records.map((record) => (
       <Record
+        id={record._id}
         key={record._id}
         type={record.type}
         description={record.description}
         value={record.value}
         date={record.date}
+        wallet={wallet}
+        setWallet={setWallet}
       />
     ));
   }
@@ -143,7 +196,7 @@ function Home() {
           Olá, {user.name}
           <ion-icon onClick={signOut} name="exit-outline" />
         </Top>
-        <CashRecords balance={wallet.balance} cashFlow={wallet.cashFlow} />
+        <CashRecords wallet={wallet} setWallet={setWallet} />
         <NewRecordButtons>
           <StyledButton onClick={() => navigate('/new-input')}>
             <ion-icon name="add-circle-outline" />
@@ -224,6 +277,20 @@ const RecordListItem = styled.li`
   align-items: center;
   font-size: 16px;
   line-height: 20px;
+
+  div {
+    display: flex;
+    align-items: center;
+  }
+
+  ion-icon {
+    font-size: 20px;
+    margin-left: 5px;
+
+    :hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 const RecordDate = styled.span`
