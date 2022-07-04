@@ -11,6 +11,7 @@ import StyledLink from './layout/StyledLink';
 import AppName from './shared/AppName';
 import UserContext from '../contexts/UserContext';
 import httpStatus from '../utils/httpStatus';
+import userLocalStorage from '../utils/userLocalStorage';
 
 function SignInForm() {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -30,6 +31,7 @@ function SignInForm() {
       .then(({ data }) => {
         const { name, email, token } = data;
         setUser({ name, email, token });
+        userLocalStorage.set('user', { name, email, token });
         navigate('/');
       })
       .catch(({ response }) => {
