@@ -1,7 +1,8 @@
 function toBrl(value) {
-  const realFormatter = Intl.NumberFormat('pr-br');
-
-  return `R$ ${realFormatter.format(value)}`;
+  return Number(value)?.toLocaleString('pt-br', {
+    style: 'currency',
+    currency: 'BRL',
+  });
 }
 
 export default toBrl;
