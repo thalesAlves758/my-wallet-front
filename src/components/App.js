@@ -7,6 +7,7 @@ import SignUp from './SignUp';
 import SignIn from './SignIn';
 import Home from './Home';
 import NewInput from './NewInput';
+import NewOutput from './NewOutput';
 
 function App() {
   const [user, setUser] = useState({
@@ -23,6 +24,7 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/" element={<Home />} />
           <Route path="/new-input" element={<NewInput />} />
+          <Route path="/new-output" element={<NewOutput />} />
         </Routes>
       </UserContext.Provider>
     </BrowserRouter>
