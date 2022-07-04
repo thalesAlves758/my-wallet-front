@@ -34,7 +34,7 @@ function NewRecordForm({ type = 'input' }) {
 
     axios
       .post(
-        `${API_URL}/wallet/new-record`,
+        `${API_URL}/records`,
         {
           ...newRecord,
           value: brlStringToNumber(newRecord.value),
