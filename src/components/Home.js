@@ -75,7 +75,7 @@ function Home() {
   });
 
   useEffect(() => {
-    if (!user) {
+    if (user.token === '') {
       navigate('/sign-in');
     }
 
@@ -145,12 +145,12 @@ function Home() {
         </Top>
         <CashRecords balance={wallet.balance} cashFlow={wallet.cashFlow} />
         <NewRecordButtons>
-          <StyledButton>
+          <StyledButton onClick={() => navigate('/new-input')}>
             <ion-icon name="add-circle-outline" />
             Nova <br /> entrada
           </StyledButton>
 
-          <StyledButton>
+          <StyledButton onClick={() => navigate('/new-output')}>
             <ion-icon name="remove-circle-outline" />
             Nova <br /> saída
           </StyledButton>
