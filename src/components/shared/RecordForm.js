@@ -11,40 +11,39 @@ import Form from '../layout/Form';
 import InputForm from '../layout/InputForm';
 import Button from '../layout/Button';
 
-function NewRecordForm({ type = 'input' }) {
+function RecordForm({ type = 'input', id, value = 0, description = '' }) {
   const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
 
   const { user } = useContext(UserContext);
 
-  const [newRecord, setNewRecord] = useState({
-    value: 0,
-    description: '',
+  const [record, setRecord] = useState({
+    value,
+    description,
     type: ['input', 'output'].includes(type) ? type : 'input',
   });
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (Number(newRecord.value) === 0) {
+    if (Number(record.value) === 0) {
       alert('O valor não pode ser 0.');
       return;
     }
 
-    axios
-      .post(
-        `${API_URL}/records`,
-        {
-          ...newRecord,
-          value: brlStringToNumber(newRecord.value),
+    axios[id ? 'put' : 'post'](
+      `${API_URL}/records${id ? `/${id}` : ''}`,
+      {
+        ...record,
+        value: brlStringToNumber(record.value),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      )
+      }
+    )
       .then(() => {
         navigate('/');
       })
@@ -67,11 +66,11 @@ function NewRecordForm({ type = 'input' }) {
         allowNegativeValue={false}
         name="value"
         required
-        value={newRecord.value}
-        onValueChange={(value) =>
-          setNewRecord({
-            ...newRecord,
-            value,
+        value={record.value}
+        onValueChange={(newValue) =>
+          setRecord({
+            ...record,
+            value: newValue,
           })
         }
       />
@@ -81,14 +80,14 @@ function NewRecordForm({ type = 'input' }) {
         type="text"
         name="description"
         required
-        value={newRecord.description}
+        value={record.description}
         onChange={(event) =>
-          setNewRecord({ ...newRecord, description: event.target.value })
+          setRecord({ ...record, description: event.target.value })
         }
       />
 
       <Button type="submit">
-        Salvar {type === 'input' ? 'entrada' : 'saída'}
+        {id ? 'Atualizar' : 'Salvar'} {type === 'input' ? 'entrada' : 'saída'}
       </Button>
     </Form>
   );
@@ -107,4 +106,4 @@ const StyledCurrencyInput = styled(CurrencyInput)`
   line-height: 23px;
 `;
 
-export default NewRecordForm;
+export default RecordForm;
