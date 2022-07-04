@@ -5,7 +5,7 @@ import UserContext from '../contexts/UserContext';
 import Container from './layout/Container';
 import Main from './layout/Main';
 import Top from './layout/Top';
-import NewRecordForm from './shared/NewRecordForm';
+import RecordForm from './shared/RecordForm';
 
 function NewInput() {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ function NewInput() {
     <Container>
       <Main notCenter>
         <Top>Nova entrada</Top>
-        <NewRecordForm type="input" />
+        <RecordForm type="input" />
       </Main>
     </Container>
   );
