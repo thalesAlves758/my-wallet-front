@@ -1,5 +1,4 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Container from './layout/Container';
@@ -10,12 +9,18 @@ import StyledLink from './layout/StyledLink';
 import Form from './layout/Form';
 import AppName from './shared/AppName';
 
-import httpStatus from '../utils/httpStatus';
+import useSignUp from '../hooks/api/useSignUp';
 
 function SignUpForm() {
-  const API_URL = process.env.REACT_APP_API_URL;
+  const { signUp, status } = useSignUp();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (status === 'success') {
+      navigate('/sign-in');
+    }
+  }, [status]);
 
   const [form, setForm] = useState({
     name: '',
@@ -28,19 +33,6 @@ function SignUpForm() {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
-  function signUp() {
-    axios
-      .post(`${API_URL}/sign-up`, form)
-      .then(() => {
-        navigate('/sign-in');
-      })
-      .catch(({ response }) => {
-        if (response.status === httpStatus.CONFLICT) {
-          alert('Já existe um usuário com este e-mail!');
-        }
-      });
-  }
-
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -49,7 +41,7 @@ function SignUpForm() {
       return;
     }
 
-    signUp();
+    signUp(form);
   }
 
   return (
