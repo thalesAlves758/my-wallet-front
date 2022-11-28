@@ -11,6 +11,10 @@ const InputForm = styled.input`
   font-size: 20px;
   color: #000000;
   line-height: 23px;
+
+  :disabled {
+    background-color: #c6c6c6;
+  }
 `;
 
 export default InputForm;
