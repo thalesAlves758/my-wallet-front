@@ -11,6 +11,7 @@ import AppName from './shared/AppName';
 
 import useSignUp from '../hooks/api/useSignUp';
 import reduceFormToSubmitObject from '../utils/reduceForm';
+import { BeatLoader } from 'react-spinners';
 
 function SignUpForm() {
   const { signUp, status } = useSignUp();
@@ -38,6 +39,10 @@ function SignUpForm() {
     signUp(newSubmitted);
   }
 
+  function isLoading() {
+    return status === 'pending';
+  }
+
   return (
     <Form ref={formEl} onSubmit={handleSubmit}>
       <InputForm
@@ -45,27 +50,33 @@ function SignUpForm() {
         name="name"
         type="text"
         required
+        disabled={isLoading()}
       />
       <InputForm
         placeholder="E-mail"
         name="email"
         type="email"
         required
+        disabled={isLoading()}
       />
       <InputForm
         placeholder="Senha"
         name="password"
         type="password"
         required
+        disabled={isLoading()}
       />
       <InputForm
         placeholder="Confirme a senha"
         name="confirmPassword"
         type="password"
         required
+        disabled={isLoading()}
       />
 
-      <Button type="submit">Cadastrar</Button>
+      <Button type="submit" disabled={isLoading()}>
+        {isLoading() ? <BeatLoader color="#ffffff" size={15} /> : 'Cadastrar'}
+      </Button>
     </Form>
   );
 }
