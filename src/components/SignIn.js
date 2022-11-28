@@ -15,6 +15,7 @@ import { BeatLoader } from 'react-spinners';
 import errorToast from '../utils/errorToast';
 import httpStatus from '../utils/httpStatus';
 import { ToastContainer } from 'react-toastify';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 function SignInForm() {
   const formEl = useRef();
@@ -25,9 +26,12 @@ function SignInForm() {
 
   const navigate = useNavigate();
 
+  const [, setStoredUser] = useLocalStorage('user', null);
+
   useEffect(() => {
     if (status === 'success') {
       setUser(result.data);
+      setStoredUser(result.data);
       navigate('/');
     }
 
