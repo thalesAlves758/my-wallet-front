@@ -42,7 +42,7 @@ function SignUpForm() {
     const newSubmitted = reduceFormToSubmitObject(formEl);
 
     if (newSubmitted.password !== newSubmitted.confirmPassword) {
-      alert('As senhas devem ser iguais!');
+      errorToast('As senhas devem ser iguais!');
       return;
     }
 
