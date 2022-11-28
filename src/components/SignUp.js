@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import Container from './layout/Container';
@@ -10,9 +10,12 @@ import Form from './layout/Form';
 import AppName from './shared/AppName';
 
 import useSignUp from '../hooks/api/useSignUp';
+import reduceFormToSubmitObject from '../utils/reduceForm';
 
 function SignUpForm() {
   const { signUp, status } = useSignUp();
+
+  const formEl = useRef();
 
   const navigate = useNavigate();
 
@@ -22,61 +25,44 @@ function SignUpForm() {
     }
   }, [status]);
 
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  function handleForm(event) {
-    setForm({ ...form, [event.target.name]: event.target.value });
-  }
-
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (form.password !== form.confirmPassword) {
+    const newSubmitted = reduceFormToSubmitObject(formEl);
+
+    if (newSubmitted.password !== newSubmitted.confirmPassword) {
       alert('As senhas devem ser iguais!');
       return;
     }
 
-    signUp(form);
+    signUp(newSubmitted);
   }
 
   return (
-    <Form onSubmit={(event) => handleSubmit(event)}>
+    <Form ref={formEl} onSubmit={handleSubmit}>
       <InputForm
         placeholder="Nome"
         name="name"
         type="text"
         required
-        value={form.name}
-        onChange={(event) => handleForm(event)}
       />
       <InputForm
         placeholder="E-mail"
         name="email"
         type="email"
         required
-        value={form.email}
-        onChange={(event) => handleForm(event)}
       />
       <InputForm
         placeholder="Senha"
         name="password"
         type="password"
         required
-        value={form.password}
-        onChange={(event) => handleForm(event)}
       />
       <InputForm
         placeholder="Confirme a senha"
         name="confirmPassword"
         type="password"
         required
-        value={form.confirmPassword}
-        onChange={(event) => handleForm(event)}
       />
 
       <Button type="submit">Cadastrar</Button>
