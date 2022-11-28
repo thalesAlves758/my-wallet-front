@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import UserContext from '../contexts/UserContext';
 
@@ -9,16 +9,20 @@ import Home from './Home';
 import NewInput from './NewInput';
 import NewOutput from './NewOutput';
 import EditRecord from './EditRecord';
-import userLocalStorage from '../utils/userLocalStorage';
+import useLocalStorage from '../hooks/useLocalStorage';
+
+function ProtectedRoute({ user, redirectPath = '/sign-in' }) {
+  if (!user) {
+    return <Navigate to={redirectPath} replace />
+  }
+
+  return <Outlet />;
+}
 
 function App() {
-  const initialUser = userLocalStorage.get('user') || {
-    name: '',
-    email: '',
-    token: '',
-  };
+  const [storedUser] = useLocalStorage('user', null);
 
-  const [user, setUser] = useState(initialUser);
+  const [user, setUser] = useState(storedUser);
 
   return (
     <BrowserRouter>
@@ -26,10 +30,13 @@ function App() {
         <Routes>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/new-input" element={<NewInput />} />
-          <Route path="/new-output" element={<NewOutput />} />
-          <Route path="/update-record" element={<EditRecord />} />
+
+          <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/new-input" element={<NewInput />} />
+            <Route path="/new-output" element={<NewOutput />} />
+            <Route path="/update-record" element={<EditRecord />} />
+          </Route>
         </Routes>
       </UserContext.Provider>
     </BrowserRouter>
