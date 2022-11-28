@@ -12,9 +12,11 @@ import AppName from './shared/AppName';
 import useSignUp from '../hooks/api/useSignUp';
 import reduceFormToSubmitObject from '../utils/reduceForm';
 import { BeatLoader } from 'react-spinners';
+import errorToast from '../utils/errorToast';
+import { ToastContainer } from 'react-toastify';
 
 function SignUpForm() {
-  const { signUp, status } = useSignUp();
+  const { signUp, status, error } = useSignUp();
 
   const formEl = useRef();
 
@@ -23,6 +25,14 @@ function SignUpForm() {
   useEffect(() => {
     if (status === 'success') {
       navigate('/sign-in');
+    }
+
+    if (status === 'error') {
+      const { status: errorStatus } = error.response;
+
+      if (errorStatus === 409) {
+        errorToast('Email já em uso!');
+      }
     }
   }, [status]);
 
@@ -84,6 +94,7 @@ function SignUpForm() {
 function SignUp() {
   return (
     <Container>
+      <ToastContainer />
       <Main>
         <AppName />
         <SignUpForm />
