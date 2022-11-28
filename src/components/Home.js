@@ -13,7 +13,6 @@ import Top from './layout/Top';
 import RenderIf from './utilities/RenderIf';
 
 import toBrl from '../utils/toBrl';
-import userLocalStorage from '../utils/userLocalStorage';
 
 const ZERO = 0;
 
@@ -174,7 +173,7 @@ function Home() {
             token: '',
           });
 
-          userLocalStorage.delete('user');
+          // userLocalStorage.delete('user');
 
           navigate('/sign-in');
         })
