@@ -15,55 +15,45 @@ import RenderIf from './utilities/RenderIf';
 import toBrl from '../utils/toBrl';
 import useGetRecords from '../hooks/api/useGetRecords';
 import { ClipLoader } from 'react-spinners';
+import useDeleteRecord from '../hooks/api/useDeleteRecord';
 
 const ZERO = 0;
 
-function toNegative(value) {
-  const MINUS_ONE = -1;
+function Record({ id, type, description, value, date, setRecords }) {
+  const { deleteRecord: deleteRecordOnDB, error, result, status } = useDeleteRecord();
 
-  return MINUS_ONE * Math.abs(value);
-}
+  const { user: { token }, setUser } = useContext(UserContext);
 
-function Record({ id, type, description, value, date, wallet, setWallet }) {
-  const API_URL = process.env.REACT_APP_API_URL;
+  useEffect(() => {
+    if (status === 'success') {
+      removeRecordFromState();
 
-  const { user } = useContext(UserContext);
+      const { balance: newBalance } = result.data;
 
-  function removeRecordFromCashFlowById(recordId) {
-    return wallet.cashFlow.filter((record) => record._id !== recordId);
+      updateUserBalance(newBalance);
+    }
+  }, [status]);
+
+  function removeRecordFromState() {
+    setRecords((prev) => {
+      return prev.filter(record => record._id !== id);
+    });
+  }
+
+  function updateUserBalance(newBalance) {
+    setUser((prev) => {
+      return { ...prev, balance: newBalance }
+    });
+  }
+
+  function wantDelete() {
+    return window.confirm('Deseja mesmo excluir este registro?');
   }
 
   function deleteRecord() {
-    const canDelete = window.confirm('Deseja mesmo excluir este registro?');
-
-    if (!canDelete) {
-      return;
+    if (wantDelete()) {
+      deleteRecordOnDB({ token, recordId: id });
     }
-
-    const newBalance =
-      wallet.balance + (type === 'input' ? toNegative(value) : value);
-
-    axios
-      .delete(`${API_URL}/records/${id}`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      })
-      .then(() => {
-        setWallet({
-          balance: newBalance,
-          cashFlow: removeRecordFromCashFlowById(id),
-        });
-      })
-      .catch(({ response }) => {
-        const { status } = response;
-
-        if (status === httpStatus.INTERNAL_SERVER_ERROR) {
-          alert(
-            'Não foi possível realizar esta operação. Tente novamente mais tarde!'
-          );
-        }
-      });
   }
 
   return (
@@ -111,8 +101,7 @@ function CashRecords() {
         description={record.description}
         value={record.value}
         date={record.date}
-        wallet={{ cashFlow: [], balance: 0 }}
-        setWallet={console.log}
+        setRecords={setRecords}
       />
     ));
   }
