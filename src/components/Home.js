@@ -75,7 +75,7 @@ function Record({ id, type, description, value, date, setRecords }) {
 function CashRecords() {
   const [records, setRecords] = useState([]);
 
-  const { error, getRecords, result, status } = useGetRecords();
+  const { getRecords, result, status } = useGetRecords();
 
   const { user: { balance, token } } = useContext(UserContext);
 
@@ -96,7 +96,7 @@ function CashRecords() {
         key={record._id}
         type={record.type}
         description={record.description}
-        value={record.value}
+        value={record.value / 100}
         date={record.date}
         setRecords={setRecords}
       />
@@ -119,7 +119,7 @@ function CashRecords() {
 
               <WalletBalance>
                 SALDO
-                <Balance positive={balance >= ZERO}>{toBrl(balance)}</Balance>
+                <Balance positive={balance >= ZERO}>{toBrl(balance / 100)}</Balance>
               </WalletBalance>
             </>
           }
