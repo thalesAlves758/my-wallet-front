@@ -11,6 +11,7 @@ import Container from './layout/Container';
 import Main from './layout/Main';
 import Top from './layout/Top';
 import RenderIf from './utilities/RenderIf';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 import toBrl from '../utils/toBrl';
 
@@ -131,6 +132,8 @@ function Home() {
     cashFlow: [],
   });
 
+  const [, setStoredUser] = useLocalStorage('user', null);
+
   useEffect(() => {
     if (user.token === '') {
       navigate('/sign-in');
@@ -152,46 +155,16 @@ function Home() {
       });
   }, []);
 
+  function wantSignOut() {
+    return window.confirm('Deseja mesmo sair?');
+  }
+
   function signOut() {
-    const canSignOut = window.confirm('Deseja mesmo sair?');
+    if (wantSignOut()) {
+      setUser(null);
+      setStoredUser(null);
 
-    if (canSignOut) {
-      axios
-        .post(
-          `${API_URL}/sign-out`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        )
-        .then(() => {
-          setUser({
-            name: '',
-            email: '',
-            token: '',
-          });
-
-          // userLocalStorage.delete('user');
-
-          navigate('/sign-in');
-        })
-        .catch(({ response }) => {
-          const { status } = response;
-
-          if (
-            status === httpStatus.UNAUTHORIZED ||
-            status === httpStatus.NOT_FOUND
-          ) {
-            navigate('/');
-            return;
-          }
-
-          alert(
-            'Não foi possível realizar esta operação! Tente novamente mais tarde'
-          );
-        });
+      navigate('/sign-in');
     }
   }
 
