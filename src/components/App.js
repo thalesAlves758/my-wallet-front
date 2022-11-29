@@ -3,12 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 
 import UserContext from '../contexts/UserContext';
 
-import SignUp from './SignUp';
-import SignIn from './SignIn';
-import Home from './Home';
-import NewInput from './NewInput';
-import NewOutput from './NewOutput';
-import EditRecord from './EditRecord';
+import SignUp from './pages/SignUp';
+import SignIn from './pages/SignIn';
+import Home from './pages/Home';
+import NewInput from './pages/NewInput';
+import NewOutput from './pages/NewOutput';
+import EditRecord from './pages/EditRecord';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function ProtectedRoute({ user, redirectPath = '/sign-in' }) {
