@@ -125,7 +125,7 @@ function CashRecords() {
         </LoadingContainer>
         :
         <>
-          {records.length <= ZERO ?
+          {records.length === ZERO ?
             <NoRecordMessage>Não há registros de entrada ou saída</NoRecordMessage>
             :
             <>
