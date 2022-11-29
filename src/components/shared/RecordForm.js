@@ -1,22 +1,25 @@
-import axios from 'axios';
 import styled from 'styled-components';
 import CurrencyInput from 'react-currency-input-field';
 import { useNavigate } from 'react-router-dom';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import UserContext from '../../contexts/UserContext';
 import brlStringToNumber from '../../utils/brlStringToNumber';
-import httpStatus from '../../utils/httpStatus';
 import Form from '../layout/Form';
 import InputForm from '../layout/InputForm';
 import Button from '../layout/Button';
+import useCreateOrUpdateRecord from '../../hooks/api/useCreateOrUpdateRecord';
+import errorToast from '../../utils/errorToast';
+import { ToastContainer } from 'react-toastify';
+import httpStatus from '../../utils/httpStatus';
+import { BeatLoader } from 'react-spinners';
 
 function RecordForm({ type = 'input', id, value = 0, description = '' }) {
-  const API_URL = process.env.REACT_APP_API_URL;
+  const { createOrUpdateRecord, error, result, status } = useCreateOrUpdateRecord();
 
   const navigate = useNavigate();
 
-  const { user } = useContext(UserContext);
+  const { user: { token }, setUser, updateUserBalance } = useContext(UserContext);
 
   const [record, setRecord] = useState({
     value,
@@ -24,53 +27,60 @@ function RecordForm({ type = 'input', id, value = 0, description = '' }) {
     type: ['input', 'output'].includes(type) ? type : 'input',
   });
 
+  useEffect(() => {
+    if (status === 'success') {
+      updateUserBalance(result.data.balance);
+
+      navigate('/');
+    }
+
+    if (status === 'error') {
+      const { status: errorStatus } = error.response;
+
+      if (errorStatus === httpStatus.UNAUTHORIZED) {
+        setUser(null);
+        navigate('/sign-in');
+      }
+    }
+  }, [status]);
+
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (Number(record.value) === 0) {
-      alert('O valor não pode ser 0.');
+    if (brlStringToNumber(record.value) === 0) {
+      errorToast('O valor não pode ser 0.');
       return;
     }
 
-    axios[id ? 'put' : 'post'](
-      `${API_URL}/records${id ? `/${id}` : ''}`,
-      {
-        ...record,
-        value: brlStringToNumber(record.value),
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      }
-    )
-      .then(() => {
-        navigate('/');
-      })
-      .catch(({ response }) => {
-        const { status } = response;
+    createOrUpdateRecord({
+      ...record,
+      value: brlStringToNumber(record.value) * 100,
+      token,
+      recordId: id
+    });
+  }
 
-        if (status === httpStatus.INTERNAL_SERVER_ERROR) {
-          alert(
-            'Não foi possível realizar esta operação. Tente novamente mais tarde!'
-          );
-        }
-      });
+  function isLoading() {
+    return status === 'pending';
   }
 
   return (
-    <Form onSubmit={(event) => handleSubmit(event)}>
+    <Form onSubmit={handleSubmit}>
+      <ToastContainer />
       <StyledCurrencyInput
         placeholder="Valor"
         intlConfig={{ locale: 'pt-br', currency: 'BRL' }}
+        disabled={isLoading()}
         allowNegativeValue={false}
         name="value"
         required
         value={record.value}
         onValueChange={(newValue) =>
-          setRecord({
-            ...record,
-            value: newValue,
+          setRecord((prev) => {
+            return {
+              ...prev,
+              value: newValue,
+            }
           })
         }
       />
@@ -80,14 +90,21 @@ function RecordForm({ type = 'input', id, value = 0, description = '' }) {
         type="text"
         name="description"
         required
+        disabled={isLoading()}
         value={record.description}
         onChange={(event) =>
-          setRecord({ ...record, description: event.target.value })
+          setRecord((prev) => {
+            return { ...prev, description: event.target.value };
+          })
         }
       />
 
       <Button type="submit">
-        {id ? 'Atualizar' : 'Salvar'} {type === 'input' ? 'entrada' : 'saída'}
+        {isLoading() ?
+          <BeatLoader color="#ffffff" size={15} />
+          :
+          <>{id ? 'Atualizar' : 'Salvar'} {type === 'input' ? 'entrada' : 'saída'}</>
+        }
       </Button>
     </Form>
   );
@@ -104,6 +121,10 @@ const StyledCurrencyInput = styled(CurrencyInput)`
   font-size: 20px;
   color: #000000;
   line-height: 23px;
+
+  :disabled {
+    background-color: #c6c6c6;
+  }
 `;
 
 export default RecordForm;
