@@ -28,9 +28,15 @@ function App() {
     setStoredUser(user);
   }, [user, setStoredUser]);
 
+  function updateUserBalance(newBalance) {
+    setUser((prev) => {
+      return { ...prev, balance: newBalance }
+    });
+  }
+
   return (
     <BrowserRouter>
-      <UserContext.Provider value={{ user, setUser }}>
+      <UserContext.Provider value={{ user, setUser, updateUserBalance }}>
         <Routes>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
