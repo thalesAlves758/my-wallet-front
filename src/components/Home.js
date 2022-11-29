@@ -13,6 +13,8 @@ import Top from './layout/Top';
 import RenderIf from './utilities/RenderIf';
 
 import toBrl from '../utils/toBrl';
+import useGetRecords from '../hooks/api/useGetRecords';
+import { ClipLoader } from 'react-spinners';
 
 const ZERO = 0;
 
@@ -83,10 +85,24 @@ function Record({ id, type, description, value, date, wallet, setWallet }) {
   );
 }
 
-function CashRecords({ wallet, setWallet }) {
-  const { balance, cashFlow } = wallet;
+function CashRecords() {
+  const [records, setRecords] = useState([]);
 
-  function renderRecords(records) {
+  const { error, getRecords, result, status } = useGetRecords();
+
+  const { user: { balance, token } } = useContext(UserContext);
+
+  useEffect(() => {
+    getRecords({ token });
+  }, []);
+
+  useEffect(() => {
+    if (status === 'success') {
+      setRecords(result.data);
+    }
+  }, [status]);
+
+  function renderRecords() {
     return records.map((record) => (
       <Record
         id={record._id}
@@ -95,62 +111,42 @@ function CashRecords({ wallet, setWallet }) {
         description={record.description}
         value={record.value}
         date={record.date}
-        wallet={wallet}
-        setWallet={setWallet}
+        wallet={{ cashFlow: [], balance: 0 }}
+        setWallet={console.log}
       />
     ));
   }
 
   return (
     <RecordsContainer>
-      <RenderIf isTrue={cashFlow.length === ZERO}>
-        <NoRecordMessage>Não há registros de entrada ou saída</NoRecordMessage>
-      </RenderIf>
+      {status === 'pending' ?
+        <LoadingContainer>
+          <ClipLoader color="#8C11BE" />
+        </LoadingContainer>
+        :
+        <>
+          {records.length <= ZERO ?
+            <NoRecordMessage>Não há registros de entrada ou saída</NoRecordMessage>
+            :
+            <>
+              <RecordList>{renderRecords()}</RecordList>
 
-      <RenderIf isTrue={cashFlow.length > ZERO}>
-        <RecordList>{renderRecords(cashFlow)}</RecordList>
-
-        <WalletBalance>
-          SALDO
-          <Balance positive={balance >= ZERO}>{toBrl(balance)}</Balance>
-        </WalletBalance>
-      </RenderIf>
+              <WalletBalance>
+                SALDO
+                <Balance positive={balance >= ZERO}>{toBrl(balance)}</Balance>
+              </WalletBalance>
+            </>
+          }
+        </>
+      }
     </RecordsContainer>
   );
 }
 
 function Home() {
-  const API_URL = process.env.REACT_APP_API_URL;
-
   const navigate = useNavigate();
 
   const { user, setUser } = useContext(UserContext);
-
-  const [wallet, setWallet] = useState({
-    balance: 0,
-    cashFlow: [],
-  });
-
-  useEffect(() => {
-    if (user.token === '') {
-      navigate('/sign-in');
-    }
-
-    axios
-      .get(`${API_URL}/wallet`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      })
-      .then(({ data }) => {
-        setWallet(data);
-      })
-      .catch(({ response }) => {
-        if (response.status === httpStatus.UNAUTHORIZED) {
-          navigate('/sign-in');
-        }
-      });
-  }, []);
 
   function wantSignOut() {
     return window.confirm('Deseja mesmo sair?');
@@ -171,7 +167,7 @@ function Home() {
           Olá, {user.name}
           <ion-icon onClick={signOut} name="exit-outline" />
         </Top>
-        <CashRecords wallet={wallet} setWallet={setWallet} />
+        <CashRecords />
         <NewRecordButtons>
           <StyledButton onClick={() => navigate('/new-input')}>
             <ion-icon name="add-circle-outline" />
@@ -187,6 +183,17 @@ function Home() {
     </Container>
   );
 }
+
+const LoadingContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const NewRecordButtons = styled.div`
   width: 100%;
