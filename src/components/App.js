@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import UserContext from '../contexts/UserContext';
@@ -20,9 +20,13 @@ function ProtectedRoute({ user, redirectPath = '/sign-in' }) {
 }
 
 function App() {
-  const [storedUser] = useLocalStorage('user', null);
+  const [storedUser, setStoredUser] = useLocalStorage('user', null);
 
   const [user, setUser] = useState(storedUser);
+
+  useEffect(() => {
+    setStoredUser(user);
+  }, [user, setStoredUser]);
 
   return (
     <BrowserRouter>

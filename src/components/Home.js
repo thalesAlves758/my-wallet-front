@@ -11,7 +11,6 @@ import Container from './layout/Container';
 import Main from './layout/Main';
 import Top from './layout/Top';
 import RenderIf from './utilities/RenderIf';
-import useLocalStorage from '../hooks/useLocalStorage';
 
 import toBrl from '../utils/toBrl';
 
@@ -132,8 +131,6 @@ function Home() {
     cashFlow: [],
   });
 
-  const [, setStoredUser] = useLocalStorage('user', null);
-
   useEffect(() => {
     if (user.token === '') {
       navigate('/sign-in');
@@ -162,7 +159,6 @@ function Home() {
   function signOut() {
     if (wantSignOut()) {
       setUser(null);
-      setStoredUser(null);
 
       navigate('/sign-in');
     }
