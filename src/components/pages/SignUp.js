@@ -1,19 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import Container from './layout/Container';
-import Main from './layout/Main';
-import InputForm from './layout/InputForm';
-import Button from './layout/Button';
-import StyledLink from './layout/StyledLink';
-import Form from './layout/Form';
-import AppName from './shared/AppName';
-
-import useSignUp from '../hooks/api/useSignUp';
-import reduceFormToSubmitObject from '../utils/reduceForm';
-import { BeatLoader } from 'react-spinners';
-import errorToast from '../utils/errorToast';
 import { ToastContainer } from 'react-toastify';
+import { BeatLoader } from 'react-spinners';
+
+import Container from '../layout/Container';
+import Main from '../layout/Main';
+import InputForm from '../layout/InputForm';
+import Button from '../layout/Button';
+import StyledLink from '../layout/StyledLink';
+import Form from '../layout/Form';
+import AppName from '../shared/AppName';
+
+import useSignUp from '../../hooks/api/useSignUp';
+import reduceFormToSubmitObject from '../../utils/reduceForm';
+import errorToast from '../../utils/errorToast';
 
 function SignUpForm() {
   const { signUp, status, error } = useSignUp();

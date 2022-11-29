@@ -3,16 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
-import UserContext from '../contexts/UserContext';
-import Button from './layout/Button';
-import Container from './layout/Container';
-import Main from './layout/Main';
-import Top from './layout/Top';
+import UserContext from '../../contexts/UserContext';
+import Button from '../layout/Button';
+import Container from '../layout/Container';
+import Main from '../layout/Main';
+import Top from '../layout/Top';
 
-import toBrl from '../utils/toBrl';
-import useGetRecords from '../hooks/api/useGetRecords';
+import toBrl from '../../utils/toBrl';
+import useGetRecords from '../../hooks/api/useGetRecords';
 import { ClipLoader } from 'react-spinners';
-import useDeleteRecord from '../hooks/api/useDeleteRecord';
+import useDeleteRecord from '../../hooks/api/useDeleteRecord';
 
 const ZERO = 0;
 

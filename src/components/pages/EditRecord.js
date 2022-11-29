@@ -1,11 +1,11 @@
 import React, { useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import UserContext from '../contexts/UserContext';
-import Container from './layout/Container';
-import Main from './layout/Main';
-import Top from './layout/Top';
-import RecordForm from './shared/RecordForm';
+import UserContext from '../../contexts/UserContext';
+import Container from '../layout/Container';
+import Main from '../layout/Main';
+import Top from '../layout/Top';
+import RecordForm from '../shared/RecordForm';
 
 function EditRecord({ type = 'input' }) {
   const navigate = useNavigate();

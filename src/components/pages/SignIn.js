@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import Button from './layout/Button';
-import Container from './layout/Container';
-import Form from './layout/Form';
-import InputForm from './layout/InputForm';
-import Main from './layout/Main';
-import StyledLink from './layout/StyledLink';
-import AppName from './shared/AppName';
-import UserContext from '../contexts/UserContext';
-import reduceFormToSubmitObject from '../utils/reduceForm';
-import useSignIn from '../hooks/api/useSignIn';
 import { BeatLoader } from 'react-spinners';
-import errorToast from '../utils/errorToast';
-import httpStatus from '../utils/httpStatus';
 import { ToastContainer } from 'react-toastify';
+
+import Button from '../layout/Button';
+import Container from '../layout/Container';
+import Form from '../layout/Form';
+import InputForm from '../layout/InputForm';
+import Main from '../layout/Main';
+import StyledLink from '../layout/StyledLink';
+import AppName from '../shared/AppName';
+import UserContext from '../../contexts/UserContext';
+import reduceFormToSubmitObject from '../../utils/reduceForm';
+import useSignIn from '../../hooks/api/useSignIn';
+import errorToast from '../../utils/errorToast';
+import httpStatus from '../../utils/httpStatus';
 
 function SignInForm() {
   const formEl = useRef();
