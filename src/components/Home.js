@@ -1,16 +1,13 @@
-import axios from 'axios';
 import React, { useEffect, useContext, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 
 import UserContext from '../contexts/UserContext';
-import httpStatus from '../utils/httpStatus';
 import Button from './layout/Button';
 import Container from './layout/Container';
 import Main from './layout/Main';
 import Top from './layout/Top';
-import RenderIf from './utilities/RenderIf';
 
 import toBrl from '../utils/toBrl';
 import useGetRecords from '../hooks/api/useGetRecords';
